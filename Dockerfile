@@ -1,7 +1,7 @@
 FROM python:3
 LABEL maintainer="Johann Bauer <bauerj@bauerj.eu>"
 
-RUN pip install uwsgi PyMySQL
+RUN pip install uwsgi PyMySQL psycopg2-binary
 RUN useradd crashhub
 
 COPY . /app
