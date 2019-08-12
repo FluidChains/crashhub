@@ -12,4 +12,4 @@ USER crashhub
 
 WORKDIR /app
 
-CMD uwsgi --socket 0.0.0.0:3031 --processes 2 --threads 2 --master --wsgi-file /app/crashhub.py --callable app
+CMD uwsgi --socket localhost:8081 --processes 2 --threads 2 --master --wsgi-file /app/crashhub.py --callable app
