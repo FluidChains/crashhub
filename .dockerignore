@@ -1,1 +1,8 @@
-Dockerfile
+Docker
+.dockerignore
+.git
+.gitignore
+LICENSE
+README.md
+tests
+.travis.yml
