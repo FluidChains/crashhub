@@ -24,8 +24,6 @@ RUN python3.6 -m pip install wheel
 
 COPY . /app
 
-WORKDIR /app/src
-
 ENV APP_NAME $appName 
 ENV GITHUB_PROJ $githubProject
 ENV GITHUB_TOKEN $githubToken
@@ -36,9 +34,14 @@ ENV DB_PORT $dbPort
 ENV DB_USER $dbUser
 ENV DB_PASS $dbPassword
 
-RUN pip3 install uwsgi PyMySQL psycopg2-binary
+WORKDIR /app
+
 RUN pip3 install --user -r requirements.txt
 
-RUN python3 /app/setup.py install
+WORKDIR /app/src
+
+RUN pip3 install uwsgi PyMySQL psycopg2-binary
+
+#RUN python3 setup.py install
 
 CMD uwsgi --socket localhost:8081 --processes 2 --threads 2 --master --wsgi-file /app/crashhub.py --callable app
