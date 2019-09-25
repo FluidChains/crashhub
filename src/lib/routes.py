@@ -2,20 +2,20 @@ import datetime
 import json
 import os
 
-from flask import Flask, request
+from flask import Blueprint, request
 from peewee import OperationalError
 
 from lib import issues, github, config
 from lib.database import db, create_tables, CrashKind, Crash, LogEntry
 
-app = Flask(__name__)
+bp = Blueprint('bp', __name__)
 
 db.connect()
 create_tables()
 db.close()
 
 
-@app.before_request
+@bp.before_request
 def setup():
     try:
         db.connect()
@@ -23,13 +23,16 @@ def setup():
         pass
 
 
-@app.teardown_request
+@bp.teardown_request
 def stop(response):
     db.close()
     return response
 
+@bp.route('/test', methods=['GET'])
+def test():
+     return '<h1>TEST SUCCESS</h1>'
 
-@app.route('/crash', methods=['POST'])
+@bp.route('/crash', methods=['POST'])
 def store_crash_legacy():
     response = store_crash(request)
     if response["status"] != "reported":
@@ -39,7 +42,7 @@ def store_crash_legacy():
                                         """<a href="{}">GitHub</a>""".format(response["location"]))
 
 
-@app.route('/crash.json', methods=['POST'])
+@bp.route('/crash.json', methods=['POST'])
 def store_crash_v2():
     return json.dumps(store_crash(request))
 

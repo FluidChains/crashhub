@@ -1,0 +1,15 @@
+server {
+        listen 80;
+        server_name "${NGINX_HOST}";
+
+        root /var/www/html;
+
+        location / {
+                return 301 https://$server_name$request_uri;
+        }
+
+        location ~ /.well-known/acme-challenge {
+                allow all;
+                root /var/www/html;
+        }
+}
