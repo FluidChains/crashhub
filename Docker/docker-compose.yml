@@ -10,11 +10,11 @@ services:
                 - githubProject
                 - githubToken
                 - dbEngine
-                - dbName
                 - dbHost
                 - dbPort
-                - dbUser
-                - dbPassword
+                - postgresUser
+                - postgresPassword
+                - postgresDatabase
         network_mode: host
         ports:
             - "${CRASHHUB_SERVICE_PORT}:8081"
@@ -26,6 +26,10 @@ services:
         network_mode: host
         volumes:
             - crashhub_db:/var/lib/postgresql/data
+        environment:
+            - "POSTGRES_USER:${postgresUser}"
+            - "POSTGRES_PASSWORD:${postgresPassword}"
+            - "POSTGRES_DB:${postgresDatabase}"
         ports:
             - "${CRASHHUB_DB_PORT}:5432"
     nginx:
@@ -68,7 +72,7 @@ services:
             - CERT_DOMAINS=$certDomains
         depends_on:
             - nginx
-        command: /bin/sh -c /app/entrypoint.sh
+        entrypoint: /bin/sh -c /app/entrypoint.sh
 volumes:
         crashhub_db:
         certbot-etc:
