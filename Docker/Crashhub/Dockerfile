@@ -44,4 +44,4 @@ RUN pip3 install uwsgi PyMySQL psycopg2-binary
 
 #RUN python3 setup.py install
 
-CMD uwsgi --socket localhost:8081 --processes 2 --threads 2 --master --wsgi-file crashhub.py --callable app
+CMD uwsgi --http localhost:8081 --processes 2 --threads 2 --master --wsgi-file crashhub.py --callable app
