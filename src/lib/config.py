@@ -1,13 +1,23 @@
 import json
 import signal
+import os
 
 config = {}
 
 
 def read_config(*_):
     global config
-    with open("config.json", "r") as f:
-        config = json.load(f)
+    config = {
+        "app_name": os.environ['APP_NAME'],
+        "github_project": os.environ['GITHUB_PROJ'],
+        "github_token": os.environ['GITHUB_TOKEN'],
+        "db_engine": os.environ['DB_ENGINE'],
+        "db_name": os.environ['DB_NAME'],
+        "db_host": os.environ['DB_HOST'],
+        "db_port": os.environ['DB_PORT'],
+        "db_user": os.environ['DB_USER'],
+        "db_password": os.environ['DB_PASS']
+    }
 
 
 def get(key, default=None):

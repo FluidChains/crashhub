@@ -1,11 +1,12 @@
 server {
-        listen 80;
-        server_name "${NGINX_HOST}";
+        listen 80 default_server;
+        listen [::]:80 default_server;
+        server_name _;
 
         root /var/www/html;
 
         location / {
-                return 301 https://$server_name$request_uri;
+                return 301 https://$host$request_uri;
         }
 
         location ~ /.well-known/acme-challenge {
