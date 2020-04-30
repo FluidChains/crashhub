@@ -1,10 +1,8 @@
-#!/bin/python3
+# crashhub.py
 
-from flask import Flask
-from lib.routes import bp
+from Crashhub import create_app
 
-app = Flask(__name__)
-app.register_blueprint(bp)
+app = create_app()
 
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8000)
+if __name__ == '__main__':
+    app.run("0.0.0.0", port=5000, threaded=True, use_reloader=False)

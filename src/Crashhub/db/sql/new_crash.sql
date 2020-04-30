@@ -1,0 +1,2 @@
+INSERT INTO crash(kind_id, app_version, os, wallet_type, exc_string, stack, description, locale, python_version)
+VALUES (%(kind_id)s, %(app_version)s, %(os)s, %(wallet_type)s, %(exc_string)s, %(stack)s, %(description)s, %(locale)s, %(python_version)s);
