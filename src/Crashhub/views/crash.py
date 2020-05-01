@@ -62,11 +62,9 @@ def store_crash(request):
     crash["id"]["file"] = os.path.split(crash["id"]["file"])[1]
 
     with g.db('get_crashkind.sql', **crash['id']) as cur:
-        columns = [desc[0] for desc in cur.description]
         kind = cur.fetchone()
     if not kind:
         with g.db('new_crashkind.sql', **crash['id']) as cur:
-            columns = [desc[0] for desc in cur.description]
             kind = cur.fetchone()
         g.db.commit()
     
