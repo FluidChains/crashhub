@@ -1,0 +1,14 @@
+version: '3.7'
+
+services:
+    flask:
+        environment:
+            - FLASK_ENV=development
+    nginx:
+        image: nginx:latest
+        ports:
+            - "5001:5001"
+        volumes:
+            - "./Nginx/Crashhub.development.template:/etc/nginx/conf.d/Crashhub.development.template"
+        restart: always
+        command: /bin/bash -c "cat /etc/nginx/conf.d/Crashhub.development.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"

@@ -1,6 +1,5 @@
 # config.py
 import os
-import secrets
 
 class Config:
     DEBUG = False
@@ -10,7 +9,7 @@ class Config:
         'user': os.environ['POSTGRES_USER'],
         'pw': os.environ['POSTGRES_PASSWORD'] ,
         'db': os.environ['POSTGRES_DB'],
-        'host': 'localhost',
+        'host': 'postgres',
         'port': '5432'
     }
 

@@ -12,9 +12,9 @@ ARG postgresDatabase
 
 RUN apt-get update
 RUN apt-get install -y software-properties-common vim
-RUN add-apt-repository ppa:jonathonf/python-3.6
-RUN apt-get update
+RUN add-apt-repository ppa:deadsnakes/ppa
 
+RUN apt-get update
 RUN apt-get install -y build-essential python3.6 python3.6-dev python3-pip
 RUN apt-get install -y git
 
@@ -24,24 +24,22 @@ RUN python3.6 -m pip install wheel
 
 COPY . /app
 
-ENV APP_NAME $appName 
-ENV GITHUB_PROJ $githubProject
-ENV GITHUB_TOKEN $githubToken
-ENV DB_ENGINE $dbEngine
-ENV DB_NAME $postgresDatabase
-ENV DB_HOST $dbHost
-ENV DB_PORT $dbPort
-ENV DB_USER $postgresUser
-ENV DB_PASS $postgresPassword
-
 WORKDIR /app
 
-RUN pip3 install --user -r requirements.txt
+RUN export PATH="$PATH:/root/.local/bin/"
+RUN export PATH="$PATH:/usr/bin/python3.6"
 
-WORKDIR /app/src
+ENV LC_ALL=C.UTF-8
+ENV LANG=C.UTF-8
 
-RUN pip3 install uwsgi PyMySQL psycopg2-binary
+RUN python3.6 -m pip install --user uwsgi
+RUN python3.6 -m pip install --user -r requirements.txt
 
-#RUN python3 setup.py install
+ENV APP_NAME $appName 
+ENV GITHUB_PROJECT $githubProject
+ENV GITHUB_TOKEN $githubToken
+ENV POSTGRES_DB $postgresDatabase
+ENV POSTGRES_USER $postgresUser
+ENV POSTGRES_PASSWORD $postgresPassword
 
-CMD uwsgi --http localhost:8081 --processes 2 --threads 2 --master --wsgi-file crashhub.py --callable app
+ENTRYPOINT exec /bin/sh entrypoint.sh
