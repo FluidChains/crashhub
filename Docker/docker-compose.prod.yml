@@ -27,7 +27,9 @@ services:
         restart: always
         depends_on:
             - certbot
-        command: /bin/sh -c /app/entrypoint.sh 
+        command: /bin/sh -c /app/entrypoint.sh
+        networks:
+            - crashhub
     certbot:
         image: certbot/certbot
         volumes:

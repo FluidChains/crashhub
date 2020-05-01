@@ -4,3 +4,9 @@ services:
     flask:
         environment:
             - FLASK_ENV=production
+        networks:
+            - crashhub
+            - electrumcloud_proxy
+networks:
+        electrumcloud_proxy:
+          external: true
