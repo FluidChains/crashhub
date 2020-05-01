@@ -25,8 +25,8 @@ class DatabaseManager:
         self.conn = connection
         self.root = root
         
-    def __call__(self, query, **params):
-        self.cur = self.conn.cursor()
+    def __call__(self, query, cursor_factory=None, **params):
+        self.cur = self.conn.cursor(cursor_factory=cursor_factory)
         try:
             with current_app.open_resource(self.root+query) as f:
                 self.cur.execute(f.read().decode('utf-8'), params)
