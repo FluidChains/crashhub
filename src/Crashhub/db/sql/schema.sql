@@ -34,7 +34,9 @@ CREATE TABLE IF NOT EXISTS request (
     latest TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-INSERT INTO request(id) VALUES (1);
+INSERT INTO request(id)
+VALUES (1)
+ON CONFLICT DO NOTHING;
 
 CREATE OR REPLACE FUNCTION trg_fn_requests_latest()
 RETURNS TRIGGER AS $$
@@ -44,6 +46,9 @@ BEGIN
 END;
 $$ language 'plpgsql';
 
-CREATE TRIGGER trg_update_request BEFORE UPDATE
+DROP TRIGGER IF EXISTS trg_update_request ON request;
+
+CREATE TRIGGER trg_update_request
+BEFORE UPDATE
 ON request FOR EACH ROW EXECUTE PROCEDURE 
 trg_fn_requests_latest();
