@@ -23,16 +23,16 @@ def update_posts(dry_run):
 
     for k in kinds:
         try:
-            if not k.get('github_id'):
+            if not k.github_id:
                 continue
-            _, body = issues.format_issue(k.get('id'))
+            _, body = issues.format_issue(k.id)
             if not dry_run:
-                github.update_issue(k.get('github_id'), body)
-            if github.issue_is_closed(k.get('github_id')):
-                body = issues.format_reopen_comment(k.get('id'), github.issue_closed_by(k.github_id))
+                github.update_issue(k.github_id, body)
+            if github.issue_is_closed(k.github_id):
+                body = issues.format_reopen_comment(k.id, github.issue_closed_by(k.github_id))
                 if body:
-                    print("Respond", k.get('github_id'), body)
+                    print("Respond", k.github_id, body)
                     if not dry_run:
-                        github.respond(k.get('github_id'), body)
+                        github.respond(k.github_id, body)
         except:
             traceback.print_exc()

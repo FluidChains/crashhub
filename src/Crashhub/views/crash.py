@@ -69,25 +69,23 @@ def store_crash(request):
             kind = cur.fetchone()
         g.db.commit()
     
-    kind = dict(zip(columns, kind))
-    
     del crash["id"]
-    crash["kind_id"] = kind.get('id')
+    crash["kind_id"] = kind.id
     g.db('new_crash.sql', **crash).close().commit()
     
-    title, body = issues.format_issue(kind.get('id'))
-    if kind.get('github_id') < 0:
+    title, body = issues.format_issue(kind.id)
+    if kind.github_id < 0:
         issue = github.report_issue(title, body)
-        g.db('update_crashkind_github_id.sql', id=kind.get('id'), github_id=issue).close().commit()
+        g.db('update_crashkind_github_id.sql', id=kind.id, github_id=issue).close().commit()
     else:
-        github.update_issue(kind.get('github_id'), body)
-        if github.issue_is_closed(kind.get('github_id')):
-            body = issues.format_reopen_comment(kind.get('id'), github.issue_closed_by(kind.get('github_id')))
+        github.update_issue(kind.github_id, body)
+        if github.issue_is_closed(kind.github_id):
+            body = issues.format_reopen_comment(kind.id, github.issue_closed_by(kind.github_id))
             print(body)
             if body:
                 print("body", body)
-                github.respond(kind.get('github_id'), body)
-    url = "https://github.com/{}/issues/{}".format(app.config.get("GITHUB_PROJECT"), kind.get('github_id'))
+                github.respond(kind.github_id, body)
+    url = "https://github.com/{}/issues/{}".format(app.config.get("GITHUB_PROJECT"), kind.github_id)
     return {
         "text": "Thanks for reporting this issue! You can track further progress on GitHub.",
         "status": "reported",

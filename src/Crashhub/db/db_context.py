@@ -1,5 +1,6 @@
 # Crashhub/db/db_context.py
 import psycopg2
+import psycopg2.extras
 
 class PostgresConfig:
 
@@ -11,7 +12,7 @@ class PostgresConfig:
         if self.conn:
             return self.conn
         conn_string = "user='{user}' password='{pw}' dbname='{db}' host='{host}' port='{port}'".format(**self.connection_params)
-        self.conn = psycopg2.connect(conn_string)
+        self.conn = psycopg2.connect(conn_string, cursor_factory=psycopg2.extras.NamedTupleCursor)
         return self.conn
 
     def close_connection(self):

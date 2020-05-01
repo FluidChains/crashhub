@@ -58,24 +58,20 @@ Could you please check if this issue really is resolved? Here is the traceback t
 
 def format_issue(kind_id):
     with g.db('get_crashkind_by_id.sql', id=kind_id) as cur:
-        columns = [desc[0] for desc in cur.description]
         kind = cur.fetchone()
-        kind = dict(zip(columns, kind))
     with g.db('get_crashes_by_kind.sql', kind_id=kind_id) as cur:
-        columns = [desc[0] for desc in cur.description]
         crashes = cur.fetchall()
-        crashes = [dict(zip(columns, row)) for row in crashes]
 
     reporter_table = ""
     additional = []
     for c in crashes:
-        reporter_table += reporter_row.format(**c).replace("\n", " ") + "\n"
-        if c.get('description'):
-            additional.append(c.get('description'))
+        reporter_table += reporter_row.format(**c._asdict()).replace("\n", " ") + "\n"
+        if c.description:
+            additional.append(c.description)
     v = {
-        "stack": crashes[0].get('stack'),
-        "type": kind.get('type'),
-        "exc_string": crashes[0].get('exc_string'),
+        "stack": crashes[0].stack,
+        "type": kind.type,
+        "exc_string": crashes[0].exc_string,
         "reporter_table": reporter_table,
         "user_count": len(crashes),
         "app_name": app.config.get('APP_NAME')
@@ -87,7 +83,7 @@ def format_issue(kind_id):
             report += "\n\n---\n\n"
     else:
         report += no_info
-    title = kind.get('type') + ": " + crashes[0].get('exc_string')
+    title = kind.type + ": " + crashes[0].exc_string
     if len(title) > 400:
         title = title[:400] + "..."
     return title, report
@@ -95,14 +91,10 @@ def format_issue(kind_id):
 
 def format_reopen_comment(kind_id, closed_by):
     with g.db('get_crashkind_by_id.sql', id=kind_id) as cur:
-        columns = [desc[0] for desc in cur.description]
         kind = cur.fetchone()
-        kind = dict(zip(columns, kind))
 
     with g.db('get_crashes_by_kind.sql', kind_id=kind_id) as cur:
-        columns = [desc[0] for desc in cur.description]
         crashes = cur.fetchall()
-        crashes = [dict(zip(columns, row)) for row in crashes]
 
     if len(crashes) < 2:
         return None
@@ -111,20 +103,20 @@ def format_reopen_comment(kind_id, closed_by):
     min_version = None
 
     for c in crashes:
-        if not min_version or LooseVersion(min_version) < LooseVersion(c.get('app_version')):
-            min_version = c.get('app_version')
+        if not min_version or LooseVersion(min_version) < LooseVersion(c.app_version):
+            min_version = c.app_version
 
-    if not LooseVersion(min_version) < LooseVersion(new_crash.get('app_version')):
+    if not LooseVersion(min_version) < LooseVersion(new_crash.app_version):
         return None
 
     v = {
         "greeting": get_greeting(),
         "user_closed": closed_by.login,
         "app_name": app.config.get('APP_NAME'),
-        "version": new_crash.get('app_version'),
+        "version": new_crash.app_version,
         "min_version": min_version,
-        "stack": new_crash.get('stack'),
-        "type": kind.get('type'),
-        "exc_string": new_crash.get('exc_string')
+        "stack": new_crash.stack,
+        "type": kind.type,
+        "exc_string": new_crash.exc_string
     }
     return template_reopen.format(**v)
