@@ -34,6 +34,7 @@ def test():
 
 @bp_crash.route('/crash', methods=['POST'])
 def store_crash_legacy():
+    g.db('update_requests.sql').close().commit()
     response = store_crash(request)
     if response["status"] != "reported":
         return response["text"]
